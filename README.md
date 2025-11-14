@@ -223,34 +223,10 @@ LOG_LEVEL=info
 - WebSocket connection count
 - Database performance
 
-## 🤝 Contributing
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
 
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🆘 Support
 
-- 📖 [Documentation](docs/architecture.md)
-- 🐛 [Issue Tracker](https://github.com/your-org/goquant-oracle-system/issues)
-- 💬 [Discord Community](https://discord.gg/goquant)
-- 📧 Email: support@goquant.io
-
-## 🚀 Roadmap
-
-- [ ] Additional oracle sources (Chainlink, custom feeds)
-- [ ] Advanced anomaly detection with ML
-- [ ] Cross-chain oracle bridges
-- [ ] MEV protection mechanisms
-- [ ] Advanced funding rate models
-- [ ] Mobile SDK for real-time prices
-
----
-
-**Built with ❤️ by the GoQuant Team**
