@@ -1,0 +1,46 @@
+# Development Dockerfile for local development with hot reloading
+FROM rust:1.75-bullseye
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    pkg-config \
+    libssl-dev \
+    libpq-dev \
+    build-essential \
+    curl \
+    git \
+    vim \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Solana CLI
+RUN sh -c "$(curl -sSfL https://release.solana.com/v1.17.0/install)"
+ENV PATH="/root/.local/share/solana/install/active_release/bin:$PATH"
+
+# Install Anchor
+RUN cargo install --git https://github.com/coral-xyz/anchor avm --locked --force
+RUN avm install 0.29.0
+RUN avm use 0.29.0
+
+# Install cargo-watch for hot reloading
+RUN cargo install cargo-watch
+
+# Set working directory
+WORKDIR /app
+
+# Copy Cargo files
+COPY Cargo.toml Cargo.lock ./
+
+# Pre-build dependencies
+RUN mkdir src && echo "fn main() {}" > src/main.rs
+RUN cargo build
+RUN rm -rf src
+
+# Set environment variables
+ENV RUST_LOG=info
+ENV RUST_BACKTRACE=1
+
+# Expose ports
+EXPOSE 3000 3001
+
+# Default command for development
+CMD ["cargo", "watch", "-x", "run"]

@@ -1,0 +1,102 @@
+# GoQuant Oracle Development Configuration
+
+[database]
+url = "postgresql://postgres:password@localhost:5432/goquant"
+max_connections = 10
+min_connections = 1
+
+[redis]
+url = "redis://127.0.0.1:6379"
+pool_size = 10
+
+[solana]
+rpc_url = "https://api.mainnet-beta.solana.com"
+ws_url = "wss://api.mainnet-beta.solana.com"
+commitment = "confirmed"
+timeout_seconds = 30
+
+[oracle]
+# Price aggregation settings
+max_price_deviation_bps = 500  # 5%
+max_price_age_seconds = 60
+update_interval_ms = 1000      # 1 second
+confidence_threshold = 0.95
+
+# Oracle weights (must sum to 1.0)
+pyth_weight = 0.6
+switchboard_weight = 0.4
+
+[api]
+host = "0.0.0.0"
+port = 3000
+cors_origins = ["http://localhost:3000", "https://goquant.io"]
+rate_limit_per_minute = 1000
+
+[websocket]
+port = 3001
+max_connections = 10000
+heartbeat_interval_seconds = 30
+
+[logging]
+level = "info"
+format = "json"
+
+[metrics]
+enabled = true
+port = 9090
+
+[trading_pairs]
+# Supported trading pairs with their configurations
+[[trading_pairs.pairs]]
+symbol = "BTC/USD"
+tick_size = "0.01"
+min_order_size = "0.0001"
+max_leverage = 20
+funding_interval_hours = 8
+
+[[trading_pairs.pairs]]
+symbol = "ETH/USD"
+tick_size = "0.01"
+min_order_size = "0.001"
+max_leverage = 20
+funding_interval_hours = 8
+
+[[trading_pairs.pairs]]
+symbol = "SOL/USD"
+tick_size = "0.001"
+min_order_size = "0.1"
+max_leverage = 20
+funding_interval_hours = 8
+
+[oracle_feeds]
+# Pyth Network feeds
+[[oracle_feeds.pyth]]
+symbol = "BTC/USD"
+pubkey = "GVXRSBjFk6e6J3NbVPXohDJetcTjaeeuykUpbQF8UoMU"
+weight = 0.6
+
+[[oracle_feeds.pyth]]
+symbol = "ETH/USD"
+pubkey = "JBu1AL4obBcCMqKBBxhpWCNUt136ijcuMZLFvTP7iWdB"
+weight = 0.6
+
+[[oracle_feeds.pyth]]
+symbol = "SOL/USD"
+pubkey = "H6ARHf6YXhGYeQfUzQNGk6rDNnLBQKrenN712K4AQJEG"
+weight = 0.6
+
+# Switchboard feeds
+[[oracle_feeds.switchboard]]
+symbol = "BTC/USD"
+pubkey = "8SXvChNYFhRq4EZuZvnhjrB3jJRQCv4k3P4W6hesH3Ee"
+weight = 0.4
+
+[[oracle_feeds.switchboard]]
+symbol = "ETH/USD"
+pubkey = "74YzQPGUT9VnjrBz8MuyDLKgKpbDqGot5xZJvTtMi6Ng"
+weight = 0.4
+
+[[oracle_feeds.switchboard]]
+symbol = "SOL/USD"
+pubkey = "GvDMxPzN1sCj7L26YDK2HnMRXEQmQ2aemov8YBtPS7vR"
+weight = 0.4

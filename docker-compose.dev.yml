@@ -1,0 +1,68 @@
+# Development docker-compose override
+version: '3.8'
+
+services:
+  # Development backend with hot reloading
+  oracle-backend-dev:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: goquant-oracle-backend-dev
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/goquant
+      - REDIS_URL=redis://redis:6379
+      - SOLANA_RPC_URL=http://host.docker.internal:8899  # Local validator
+      - RUST_LOG=debug
+      - RUST_BACKTRACE=1
+    ports:
+      - "3000:3000"  # REST API
+      - "3001:3001"  # WebSocket
+    volumes:
+      - ./backend/src:/app/src:cached
+      - ./backend/Cargo.toml:/app/Cargo.toml:cached
+      - ./backend/Cargo.lock:/app/Cargo.lock:cached
+      - ./config:/app/config:cached
+      - cargo-cache:/usr/local/cargo/registry
+    restart: unless-stopped
+    networks:
+      - goquant-network
+    profiles:
+      - development
+
+  # Solana local validator
+  solana-validator:
+    image: solanalabs/solana:v1.17.0
+    container_name: goquant-solana-validator
+    command: >
+      bash -c "
+        solana-test-validator
+        --ledger /ledger
+        --bind-address 0.0.0.0
+        --rpc-bind-address 0.0.0.0
+        --gossip-bind-address 0.0.0.0
+        --dynamic-port-range 8002-8020
+        --enable-rpc-transaction-history
+        --enable-extended-tx-metadata-storage
+        --rpc-pubsub-enable-block-subscription
+      "
+    ports:
+      - "8899:8899"   # RPC
+      - "8900:8900"   # WebSocket
+      - "8001:8001"   # Gossip
+    volumes:
+      - solana-ledger:/ledger
+    networks:
+      - goquant-network
+    profiles:
+      - development
+
+volumes:
+  cargo-cache:
+    driver: local
+  solana-ledger:
+    driver: local
